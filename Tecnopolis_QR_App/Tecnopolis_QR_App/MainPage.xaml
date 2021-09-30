@@ -1,0 +1,40 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="Tecnopolis_QR_App.MainPage">
+
+    
+
+    <StackLayout>
+
+        <Frame>
+
+            <Image Source="LOGOARQTECH2"
+                ></Image>
+            
+        </Frame>
+        
+        <ImageButton Source="Qr_Scanner"
+                     x:Name="btnScannerQR"
+                     Clicked="BtnScannerQR_OnClicked"
+                     Aspect="Fill"
+                     HeightRequest="{OnPlatform iOS=320, Android=320}"
+                     WidthRequest="{OnPlatform iOS=320, Android=320}"
+                     BackgroundColor="Transparent"
+                     HorizontalOptions="CenterAndExpand"
+                     VerticalOptions="CenterAndExpand" />
+
+        <Button Text="Registrar con DNI"
+                x:Name="btnInputDNI"
+                Clicked="BtnInputDNI_OnClicked"
+                TextColor="White"
+                BackgroundColor="#FF9300"
+                VerticalOptions="CenterAndExpand"
+                HorizontalOptions="Center"
+                HeightRequest="45"
+                WidthRequest="200"
+            ></Button>
+
+    </StackLayout>
+
+</ContentPage>

@@ -1,0 +1,38 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="Tecnopolis_QR_App.NotPass">
+    <ContentPage.Content>
+        <StackLayout>
+
+            <StackLayout VerticalOptions="CenterAndExpand"
+                         HorizontalOptions="CenterAndExpand">
+                <Label Text="No pueden pasar"
+                       TextColor="#DE1E1A"
+                       FontSize="50"
+                       Padding="0"
+                       VerticalOptions="Start" 
+                       HorizontalOptions="CenterAndExpand" />
+                <Image Source="cross_gif"
+                       IsAnimationPlaying="True"
+                       WidthRequest="300"
+                       HeightRequest="300"
+                       VerticalOptions="Center"
+                       HorizontalOptions="CenterAndExpand"
+                ></Image>
+            </StackLayout>
+
+            <Button Text="Cerrar"
+                    x:Name="CloseBtn"
+                    TextColor="White"
+                    BackgroundColor="#FF9300"
+                    VerticalOptions="CenterAndExpand"
+                    HorizontalOptions="Center"
+                    HeightRequest="45"
+                    WidthRequest="200"
+                    Clicked="CloseBtn_OnClicked"
+            ></Button>
+
+        </StackLayout>
+    </ContentPage.Content>
+</ContentPage>
