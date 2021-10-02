@@ -14,7 +14,6 @@
                        VerticalOptions="Start" 
                        HorizontalOptions="CenterAndExpand" />
                 <Image Source="cross_gif"
-                       IsAnimationPlaying="True"
                        WidthRequest="300"
                        HeightRequest="300"
                        VerticalOptions="Center"

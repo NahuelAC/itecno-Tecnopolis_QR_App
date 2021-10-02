@@ -7,6 +7,7 @@
 
             <StackLayout HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand">
                 <Entry Placeholder="Ingresar DNI"
+                       x:Name="EntryDni"
                        MaxLength="15"
                        WidthRequest="250"
                        IsSpellCheckEnabled="false"
@@ -15,6 +16,7 @@
                        HorizontalOptions="CenterAndExpand" />
 
                 <Button Text="Registrar"
+                        x:Name="RegistBtn"
                         TextColor="White"
                         Margin="0,25,0,0"
                         BackgroundColor="#FF9300"
@@ -22,7 +24,7 @@
                         HorizontalOptions="CenterAndExpand"
                         HeightRequest="45"
                         WidthRequest="150"
-                        Clicked="CloseBtn_OnClicked"
+
                 ></Button>
             </StackLayout>
 
