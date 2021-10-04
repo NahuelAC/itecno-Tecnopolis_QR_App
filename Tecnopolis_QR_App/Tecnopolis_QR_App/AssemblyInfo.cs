@@ -1,3 +1,3 @@
 using Xamarin.Forms.Xaml;
 
-[assembly: XamlCompilation(XamlCompilationOptions.Compile)]//hola
+[assembly: XamlCompilation(XamlCompilationOptions.Compile)]
