@@ -1,15 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Tecnopolis_QR_App.Models;
-using Xamarin.Forms;
-using ZXing.Net.Mobile.Forms;
 
-
-namespace Tecnopolis_QR_App
+namespace Tecnopolis_QR_App.Views
 {
     public partial class MainPage
     {
@@ -81,12 +74,12 @@ namespace Tecnopolis_QR_App
 
             if (qr_dt.Date == dt_actual.Date)
             {
-                var dni_already_register = await App.SQLiteDB.GetClienteByDniAsync(qr_dni, qr_dt);
+                var dni_already_register = await App.SQLiteDB.GetClienteByDniAsync(qr_dni);
                 if (dni_already_register != null && dni_already_register.fechayhora.Day == qr_dt.Day)
                     response = false;
                 else
                 {
-                    Clientes clients = new Clientes
+                    Clientes client = new Clientes
                     {
                         espectaculo_id = qr_data[0],
                         dni = qr_data[1],
@@ -94,7 +87,7 @@ namespace Tecnopolis_QR_App
                         personas = qr_data[3],
                         sala = qr_data[4]
                     };
-                    await App.SQLiteDB.SaveClientesAsync(clients);
+                    await App.SQLiteDB.SaveClientesAsync(client);
 
                     response = true;
                 }

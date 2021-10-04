@@ -3,6 +3,7 @@ using System.IO;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 using Tecnopolis_QR_App;
+using Tecnopolis_QR_App.Views;
 
 
 namespace Tecnopolis_QR_App
