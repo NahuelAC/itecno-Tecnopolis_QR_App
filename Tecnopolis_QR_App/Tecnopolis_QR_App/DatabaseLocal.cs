@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using SQLite;
 using Tecnopolis_QR_App.Models;
@@ -15,7 +16,7 @@ namespace Tecnopolis_QR_App
             db.CreateTableAsync<Clientes>().Wait();
         }
 
-        public Task<int> SaveClientesAsync(Clientes clients)
+        public Task SaveClientesAsync(Clientes clients)
         {
             if (clients.id==0)
             {
@@ -27,10 +28,9 @@ namespace Tecnopolis_QR_App
             }
         }
 
-        //public Task<Clientes> GetClienteByDniAsync(string Dni, DateTime Dt)
-        public Task<Clientes> GetClienteByDniAsync(string Dni)
+        public Task<List<Clientes>> GetClienteByDni(string dni)
         {
-            return db.Table<Clientes>().Where(a => a.dni == Dni).FirstOrDefaultAsync();
+            return db.Table<Clientes>().Where(c => c.dni == dni).ToListAsync();
         }
     }
 }

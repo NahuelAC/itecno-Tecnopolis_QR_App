@@ -1,6 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
-using Plugin.Connectivity;
 using Tecnopolis_QR_App.Models;
 
 namespace Tecnopolis_QR_App.Views
@@ -24,8 +25,6 @@ namespace Tecnopolis_QR_App.Views
 
                 var separator = '-';
                 string[] qr_data = result.Text.Split(separator);
-                //string[] qrdt = qr_data[2].Split(' ');
-                //qr_data[2] = qrdt[0] + " " + qrdt[1];
 
                 if (result != null)
                 {
@@ -42,6 +41,8 @@ namespace Tecnopolis_QR_App.Views
                         can_pass = await CanPassLocalDB(qr_data);
                         mode = 'l';
                     }
+
+                    //bool can_pass = await CanPassLocalDB(qr_data);
 
                     if (can_pass)
                     {
@@ -86,8 +87,21 @@ namespace Tecnopolis_QR_App.Views
 
             if (qr_dt.Date == dt_actual.Date && dt_actual.Hour <= (qr_dt.Hour + 2))
             {
-                var dni_already_register = await App.SQLiteDB.GetClienteByDniAsync(qr_dni);
-                if (dni_already_register != null && dni_already_register.fechayhora.Day == qr_dt.Day)
+                var data = await App.SQLiteDB.GetClienteByDni(qr_dni);
+
+                if ( !IsEmpty(data) )
+                    foreach (var client in data)
+                    {
+                        if (client.dni == qr_dni && client.fechayhora == qr_dt)
+                        {
+                            response = true;
+                            break;
+                        }
+                    }
+                else
+                    response = false;
+
+                if (response)
                     response = false;
                 else
                 {
@@ -118,6 +132,16 @@ namespace Tecnopolis_QR_App.Views
         private async void ShowDisplayAlert(string message)
         {
             await DisplayAlert(" ", message, "Ok");
+        }
+
+        public static bool IsEmpty<T>(List<T> list)
+        {
+            if (list == null)
+            {
+                return true;
+            }
+
+            return !list.Any();
         }
     }
 }

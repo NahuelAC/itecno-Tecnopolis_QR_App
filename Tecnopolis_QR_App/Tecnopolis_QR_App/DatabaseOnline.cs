@@ -19,7 +19,7 @@ namespace Tecnopolis_QR_App
                 };
                 using (SqlConnection con = new SqlConnection(builder.ConnectionString))
                 {
-                    string query = $"select * from <table> where <dni>='{dni}' and <dt>='{dt}'";
+                    string query = $"select * from <table> where <dni>='{dni}'";
                     using (SqlCommand cmd = new SqlCommand(query, con))
                     {
                         con.Open();
