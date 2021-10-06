@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
+using Plugin.Connectivity;
 using Tecnopolis_QR_App.Models;
 
 namespace Tecnopolis_QR_App.Views
@@ -23,13 +24,24 @@ namespace Tecnopolis_QR_App.Views
 
                 var separator = '-';
                 string[] qr_data = result.Text.Split(separator);
-                string[] qrdt = qr_data[2].Split(' ');
-                qr_data[2] = qrdt[0] + " " + qrdt[1];
+                //string[] qrdt = qr_data[2].Split(' ');
+                //qr_data[2] = qrdt[0] + " " + qrdt[1];
 
                 if (result != null)
                 {
-                    //bool can_pass = CanPassOnlineDB(qr_data);
-                    bool can_pass = await CanPassLocalDB(qr_data);
+                    bool can_pass = false;
+                    char mode = 'l';
+
+                    if (new App().DoIHaveInternet())
+                    {
+                        can_pass = CanPassOnlineDB(qr_data);
+                        mode = 'o';
+                    }
+                    else
+                    {
+                        can_pass = await CanPassLocalDB(qr_data);
+                        mode = 'l';
+                    }
 
                     if (can_pass)
                     {
@@ -37,11 +49,11 @@ namespace Tecnopolis_QR_App.Views
                     }
                     else
                     {
+                        if (mode == 'o')
+                            await DisplayAlert("Error", "No se puede conectar a la base de datos. Si el problema persiste desconectese de internet para utilizar la base de datos local.", "Ok");
                         await Navigation.PushModalAsync(new NotPass());
                     }
                 }
-
-                
 
             }
             catch (Exception ex)
@@ -59,7 +71,7 @@ namespace Tecnopolis_QR_App.Views
 
             if (qr_dt.Date == dt_actual.Date && dt_actual.Hour <= (qr_dt.Hour + 2))
             {
-                bool data = new DatabaseOnline().getInfo(qr_dni, qr_dt);
+                bool data = new DatabaseOnline().GetClientByDni(qr_dni, qr_dt);
                 response = data;
             }
 
@@ -72,7 +84,7 @@ namespace Tecnopolis_QR_App.Views
             DateTime qr_dt = Convert.ToDateTime(qr_data[2]);
             string qr_dni = qr_data[1];
 
-            if (qr_dt.Date == dt_actual.Date)
+            if (qr_dt.Date == dt_actual.Date && dt_actual.Hour <= (qr_dt.Hour + 2))
             {
                 var dni_already_register = await App.SQLiteDB.GetClienteByDniAsync(qr_dni);
                 if (dni_already_register != null && dni_already_register.fechayhora.Day == qr_dt.Day)
@@ -101,6 +113,11 @@ namespace Tecnopolis_QR_App.Views
         {
             await Navigation.PushModalAsync(new InputDni());
 
+        }
+
+        private async void ShowDisplayAlert(string message)
+        {
+            await DisplayAlert(" ", message, "Ok");
         }
     }
 }

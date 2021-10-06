@@ -5,7 +5,7 @@ namespace Tecnopolis_QR_App
 {
     public class DatabaseOnline
     {
-        public bool getInfo(string dni, DateTime dt)
+        public bool GetClientByDni(string dni, DateTime dt)
         {
             bool response = false;
             try
@@ -19,26 +19,31 @@ namespace Tecnopolis_QR_App
                 };
                 using (SqlConnection con = new SqlConnection(builder.ConnectionString))
                 {
-                    string query = "";
+                    string query = $"select * from <table> where <dni>='{dni}' and <dt>='{dt}'";
                     using (SqlCommand cmd = new SqlCommand(query, con))
                     {
                         con.Open();
                         using (SqlDataReader reader = cmd.ExecuteReader())
                         {
-                            if (reader.Read())
+                            while (reader.Read())
+                            {
                                 if (dni == reader.GetString(-1) && dt == reader.GetDateTime(-1))
+                                {
                                     response = true;
+                                    break;
+                                }
                                 else
+                                {
                                     response = false;
-                            else
-                                response = false;
+                                }
+                            }
 
                         }
                     }
                     
                 }
             }
-            catch (Exception e)
+            catch
             {
                 response = false;
             }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using Plugin.Connectivity;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 using Tecnopolis_QR_App;
@@ -16,6 +17,7 @@ namespace Tecnopolis_QR_App
             InitializeComponent();
 
             MainPage = new MainPage();
+
         }
 
         public static DatabaseLocal SQLiteDB
@@ -31,6 +33,11 @@ namespace Tecnopolis_QR_App
             }
         }
 
+        public bool DoIHaveInternet()
+        {
+            return CrossConnectivity.Current.IsConnected;
+        }
+
         protected override void OnStart()
         {
         }
@@ -43,4 +50,5 @@ namespace Tecnopolis_QR_App
         {
         }
     }
+
 }
