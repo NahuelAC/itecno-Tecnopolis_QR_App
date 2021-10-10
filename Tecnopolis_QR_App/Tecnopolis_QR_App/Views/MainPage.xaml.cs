@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Tecnopolis_QR_App.Models;
+using Xamarin.Forms;
 
 namespace Tecnopolis_QR_App.Views
 {
@@ -28,25 +29,25 @@ namespace Tecnopolis_QR_App.Views
 
                 if (result != null)
                 {
-                    bool can_pass = false;
                     char mode = 'l';
+                    // bool can_pass = false;
+                    //
+                    // if (new App().DoIHaveInternet())
+                    // {
+                    //     can_pass = CanPassOnlineDB(qr_data);
+                    //     mode = 'o';
+                    // }
+                    // else
+                    // {
+                    //     can_pass = await CanPassLocalDB(qr_data);
+                    //     mode = 'l';
+                    // }
 
-                    if (new App().DoIHaveInternet())
-                    {
-                        can_pass = CanPassOnlineDB(qr_data);
-                        mode = 'o';
-                    }
-                    else
-                    {
-                        can_pass = await CanPassLocalDB(qr_data);
-                        mode = 'l';
-                    }
-
-                    //bool can_pass = await CanPassLocalDB(qr_data);
+                    bool can_pass = await CanPassLocalDB(qr_data);
 
                     if (can_pass)
                     {
-                        await Navigation.PushModalAsync(new Pass(qr_data[3]));
+                        await Navigation.PushModalAsync(new Pass(qr_data[4]));
                     }
                     else
                     {
@@ -85,7 +86,8 @@ namespace Tecnopolis_QR_App.Views
             DateTime qr_dt = Convert.ToDateTime(qr_data[2]);
             string qr_dni = qr_data[1];
 
-            if (qr_dt.Date == dt_actual.Date && dt_actual.Hour <= (qr_dt.Hour + 2))
+            // if (qr_dt.Date == dt_actual.Date && dt_actual.Hour <= (qr_dt.Hour + 2))
+            if (qr_dt.Date == dt_actual.Date)
             {
                 var data = await App.SQLiteDB.GetClienteByDni(qr_dni);
 
@@ -110,8 +112,8 @@ namespace Tecnopolis_QR_App.Views
                         espectaculo_id = qr_data[0],
                         dni = qr_data[1],
                         fechayhora = Convert.ToDateTime(qr_data[2]),
-                        personas = qr_data[3],
-                        sala = qr_data[4]
+                        personas = qr_data[4],
+                        sala = qr_data[5]
                     };
                     await App.SQLiteDB.SaveClientesAsync(client);
 
@@ -125,7 +127,8 @@ namespace Tecnopolis_QR_App.Views
 
         private async void BtnInputDNI_OnClicked(object sender, EventArgs e)
         {
-            await Navigation.PushModalAsync(new InputDni());
+            // await Navigation.PushModalAsync(new InputDni());
+            await DisplayAlert("Error", "Funcion no disponible", "Ok");
 
         }
 
@@ -142,6 +145,11 @@ namespace Tecnopolis_QR_App.Views
             }
 
             return !list.Any();
+        }
+
+        private async void UploadDataBtn_OnClicked(object sender, EventArgs e)
+        {
+            await DisplayAlert("Error", "Funcion no disponible", "Ok");
         }
     }
 }

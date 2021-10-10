@@ -32,5 +32,10 @@ namespace Tecnopolis_QR_App
         {
             return db.Table<Clientes>().Where(c => c.dni == dni).ToListAsync();
         }
+
+        public Task<List<Clientes>> GetAllClientes()
+        {
+            return db.Table<Clientes>().ToListAsync();
+        }
     }
 }
