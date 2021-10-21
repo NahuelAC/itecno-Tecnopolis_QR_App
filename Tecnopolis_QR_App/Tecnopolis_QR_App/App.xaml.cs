@@ -32,6 +32,7 @@ namespace Tecnopolis_QR_App
                 return db;
             }
         }
+        
 
         public bool DoIHaveInternet()
         {

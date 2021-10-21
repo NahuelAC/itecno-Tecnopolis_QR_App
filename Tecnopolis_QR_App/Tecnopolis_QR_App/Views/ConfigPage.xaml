@@ -1,0 +1,49 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="Tecnopolis_QR_App.Views.ConfigPage">
+    <ContentPage.Content>
+        <StackLayout>
+            <Button Text="Cambiar modo"
+                    x:Name="cmBtn"
+                    TextColor="White"
+                    BackgroundColor="#FF9300"
+                    VerticalOptions="CenterAndExpand"
+                    HorizontalOptions="Center"
+                    HeightRequest="45"
+                    WidthRequest="200"
+                    Clicked="CmBtn_OnClicked"
+            />
+            <Button Text="Actualizar base de datos"
+                    x:Name="adbBtn"
+                    TextColor="White"
+                    BackgroundColor="#FF9300"
+                    VerticalOptions="CenterAndExpand"
+                    HorizontalOptions="Center"
+                    HeightRequest="45"
+                    WidthRequest="250"
+                    Clicked="AdbBtn_OnClicked"
+            />
+            <Button Text="subir datos locales"
+                    x:Name="udlBtn"
+                    TextColor="White"
+                    BackgroundColor="#FF9300"
+                    VerticalOptions="CenterAndExpand"
+                    HorizontalOptions="Center"
+                    HeightRequest="45"
+                    WidthRequest="200"
+                    Clicked="UdlBtn_OnClicked"
+            />
+            <Button Text="Cerrar"
+                    TextColor="White"
+                    BackgroundColor="#FF9300"
+                    VerticalOptions="CenterAndExpand"
+                    HorizontalOptions="Center"
+                    HeightRequest="45"
+                    WidthRequest="200"
+                    Clicked="CloseBtn_OnClicked"
+            />
+        </StackLayout>
+    </ContentPage.Content>
+</ContentPage>

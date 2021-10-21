@@ -14,6 +14,7 @@ namespace Tecnopolis_QR_App
         {
             db = new SQLiteAsyncConnection(dbPath);
             db.CreateTableAsync<Clientes>().Wait();
+            db.CreateTableAsync<Entradas>().Wait();
         }
 
         public Task SaveClientesAsync(Clientes clients)
@@ -37,5 +38,27 @@ namespace Tecnopolis_QR_App
         {
             return db.Table<Clientes>().ToListAsync();
         }
+        public Task SaveEntradasAsync(Entradas entrada)
+        {
+            if (entrada.idEntradas==0)
+            {
+                return db.InsertAsync(entrada);
+            }
+            else
+            {
+                return null;
+            }
+        }
+
+        public Task<List<Entradas>> GetEntradaByDni(string dni)
+        {
+            return db.Table<Entradas>().Where(c => c.DNI == dni).ToListAsync();
+        }
+
+        public Task<List<Entradas>> GetAllEntradas()
+        {
+            return db.Table<Entradas>().ToListAsync();
+        }
+        
     }
 }

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Tecnopolis_QR_App.Models;
 using Xamarin.Forms;
+using static Tecnopolis_QR_App.ApiClient;
 
 namespace Tecnopolis_QR_App.Views
 {
@@ -16,6 +17,11 @@ namespace Tecnopolis_QR_App.Views
 
         private async void BtnScannerQR_OnClicked(object sender, EventArgs e)
         {
+            await Tecnopolis();
+        }
+
+        private async Task Tecnopolis()
+        {
             try
             {
                 var scanner = new ZXing.Mobile.MobileBarcodeScanner();
@@ -26,60 +32,72 @@ namespace Tecnopolis_QR_App.Views
 
                 var separator = '-';
                 string[] qr_data = result.Text.Split(separator);
+                var x = qr_data[2].Split(' ');
+                qr_data[2] = x[0] + ' ' + x[1];
 
                 if (result != null)
                 {
                     char mode = 'l';
-                    // bool can_pass = false;
-                    //
-                    // if (new App().DoIHaveInternet())
-                    // {
-                    //     can_pass = CanPassOnlineDB(qr_data);
-                    //     mode = 'o';
-                    // }
-                    // else
-                    // {
-                    //     can_pass = await CanPassLocalDB(qr_data);
-                    //     mode = 'l';
-                    // }
-
-                    bool can_pass = await CanPassLocalDB(qr_data);
-
-                    if (can_pass)
+                    bool can_pass = false;
+                    
+                    if (new App().DoIHaveInternet())
                     {
-                        await Navigation.PushModalAsync(new Pass(qr_data[4]));
+                        can_pass = await TCanPassOnlineDB(qr_data);
+                        mode = 'o';
                     }
                     else
                     {
-                        if (mode == 'o')
-                            await DisplayAlert("Error", "No se puede conectar a la base de datos. Si el problema persiste desconectese de internet para utilizar la base de datos local.", "Ok");
+                        can_pass = await TCanPassLocalDB(qr_data);
+                        mode = 'l';
+                    }
+
+                    // bool can_pass = await CanPassLocalDB(qr_data);
+
+                    if (can_pass)
+                    {
+                        await Navigation.PushModalAsync(new Pass(qr_data[3]));
+                    }
+                    else
+                    {
                         await Navigation.PushModalAsync(new NotPass());
                     }
                 }
 
             }
-            catch (Exception ex)
+            catch (Exception e)
             {
-                await DisplayAlert("Error", ex.Message.ToString(), "Ok");
+                if (new App().DoIHaveInternet())
+                    await DisplayAlert("Error", "No se puede conectar a la base de datos. Si el problema persiste desconectese de internet para utilizar la base de datos local.", "Ok");
+                else
+                    await DisplayAlert("Error", e.Message.ToString(), "Ok");
             }
         }
 
-        private bool CanPassOnlineDB(string[] qr_data)
+        private async Task<bool> TCanPassOnlineDB(string[] qr_data)
         {
             bool response = false;
             DateTime dt_actual = DateTime.Now;
             DateTime qr_dt = Convert.ToDateTime(qr_data[2]);
             string qr_dni = qr_data[1];
-
+        
             if (qr_dt.Date == dt_actual.Date && dt_actual.Hour <= (qr_dt.Hour + 2))
             {
-                bool data = new DatabaseOnline().GetClientByDni(qr_dni, qr_dt);
-                response = data;
+                var data = await TApiGetTicketsByDni(qr_dni);
+                
+                foreach (var entrada in data)
+                {
+                    if (entrada.DNI == qr_dni && entrada.Fecha == qr_dt)
+                    {
+                        response = true;
+                        break;
+                    }
+                }
             }
-
+        
             return response;
         }
-        private async Task<bool> CanPassLocalDB(string[] qr_data)
+        
+        private async Task<bool> TCanPassLocalDB(string[] qr_data)
         {
             bool response = false;
             DateTime dt_actual = DateTime.Now;
@@ -89,12 +107,12 @@ namespace Tecnopolis_QR_App.Views
             // if (qr_dt.Date == dt_actual.Date && dt_actual.Hour <= (qr_dt.Hour + 2))
             if (qr_dt.Date == dt_actual.Date)
             {
-                var data = await App.SQLiteDB.GetClienteByDni(qr_dni);
+                var datae = await App.SQLiteDB.GetEntradaByDni(qr_dni);
 
-                if ( !IsEmpty(data) )
-                    foreach (var client in data)
+                if ( !IsEmpty(datae) )
+                    foreach (var e in datae)
                     {
-                        if (client.dni == qr_dni && client.fechayhora == qr_dt)
+                        if (e.DNI == qr_dni && e.Fecha == qr_dt)
                         {
                             response = true;
                             break;
@@ -104,20 +122,36 @@ namespace Tecnopolis_QR_App.Views
                     response = false;
 
                 if (response)
-                    response = false;
+                    response = true;
                 else
                 {
-                    Clientes client = new Clientes
+                    var datac = await App.SQLiteDB.GetClienteByDni(qr_dni);
+
+                    if (!IsEmpty(datac))
                     {
+                        foreach (var c in datac)
+                        {
+                            if (c.dni == qr_dni && c.fechayhora == qr_dt)
+                            {
+                                response = false;
+                                break;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        Clientes client = new Clientes 
+                        {
                         espectaculo_id = qr_data[0],
                         dni = qr_data[1],
                         fechayhora = Convert.ToDateTime(qr_data[2]),
-                        personas = qr_data[4],
-                        sala = qr_data[5]
-                    };
-                    await App.SQLiteDB.SaveClientesAsync(client);
+                        personas = qr_data[3],
+                        sala = qr_data[4]
+                        };
+                        await App.SQLiteDB.SaveClientesAsync(client);
 
-                    response = true;
+                        response = true;
+                    }
                 }
                 
             }
@@ -125,16 +159,10 @@ namespace Tecnopolis_QR_App.Views
             return response;
         }
 
-        private async void BtnInputDNI_OnClicked(object sender, EventArgs e)
+        private async void BtnScanDNI_OnClicked(object sender, EventArgs e)
         {
-            // await Navigation.PushModalAsync(new InputDni());
             await DisplayAlert("Error", "Funcion no disponible", "Ok");
 
-        }
-
-        private async void ShowDisplayAlert(string message)
-        {
-            await DisplayAlert(" ", message, "Ok");
         }
 
         public static bool IsEmpty<T>(List<T> list)
@@ -147,9 +175,9 @@ namespace Tecnopolis_QR_App.Views
             return !list.Any();
         }
 
-        private async void UploadDataBtn_OnClicked(object sender, EventArgs e)
+        private async void ConfigBtn_OnClicked(object sender, EventArgs e)
         {
-            await DisplayAlert("Error", "Funcion no disponible", "Ok");
+            await Navigation.PushModalAsync(new ConfigPage());
         }
     }
 }

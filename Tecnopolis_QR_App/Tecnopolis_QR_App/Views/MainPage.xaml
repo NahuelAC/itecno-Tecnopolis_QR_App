@@ -8,9 +8,15 @@
 
         <Frame>
 
-            <Image Source="LOGOARQTECH2" HorizontalOptions="Center" />
+            <ImageButton Source="LOGOARQTECH2" HorizontalOptions="Center" BackgroundColor="Transparent"
+                         x:Name="ConfigBtn" Clicked="ConfigBtn_OnClicked"/>
             
         </Frame>
+        
+        <Label x:Name="modeLabel"
+               Text="Modo: Tecnopolis"
+               TextColor="Gray"
+               HorizontalOptions="CenterAndExpand"/>
         
         <ImageButton Source="Qr_Scanner"
                      x:Name="btnScannerQR"
@@ -22,20 +28,9 @@
                      HorizontalOptions="CenterAndExpand"
                      VerticalOptions="CenterAndExpand" />
 
-        <Button Text="Registrar con DNI"
+        <Button Text="Escanear DNI"
                 x:Name="btnInputDNI"
-                Clicked="BtnInputDNI_OnClicked"
-                TextColor="White"
-                BackgroundColor="#FF9300"
-                VerticalOptions="CenterAndExpand"
-                HorizontalOptions="CenterAndExpand"
-                HeightRequest="45"
-                WidthRequest="200"
-        />
-            
-        <Button Text="Upload data"
-                x:Name="UploadDataBtn"
-                Clicked="UploadDataBtn_OnClicked"
+                Clicked="BtnScanDNI_OnClicked"
                 TextColor="White"
                 BackgroundColor="#FF9300"
                 VerticalOptions="CenterAndExpand"

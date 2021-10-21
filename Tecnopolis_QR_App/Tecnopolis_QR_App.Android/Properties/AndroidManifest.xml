@@ -2,6 +2,9 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android" android:versionCode="2" android:versionName="2.0" package="arqytech.qr" android:installLocation="preferExternal">
 	<uses-sdk android:minSdkVersion="24" android:targetSdkVersion="30" />
 	<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-	<application android:label="ARQ&amp;TECH QR" android:theme="@style/MainTheme" android:icon="@mipmap/icon"></application>
+	<application android:label="ARQ&amp;TECH QR" 
+				 android:theme="@style/MainTheme" 
+				 android:icon="@mipmap/icon" 
+				 android:usesCleartextTraffic="true"/>
 	<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 </manifest>
