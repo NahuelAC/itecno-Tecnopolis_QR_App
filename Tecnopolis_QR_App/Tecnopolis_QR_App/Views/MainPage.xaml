@@ -35,7 +35,7 @@
         <!--         WidthRequest="200" -->
         <!--     ></Button> -->
         
-        <Button Text="Registrar con DNI"
+        <Button Text="Backup"
                 x:Name="btnUploadData"
                 Clicked="BtnUploadData_OnClicked"
                 TextColor="White"

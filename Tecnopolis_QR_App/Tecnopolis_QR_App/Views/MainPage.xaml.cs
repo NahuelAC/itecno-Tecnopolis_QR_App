@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Acr.UserDialogs;
 using Newtonsoft.Json;
 using Plugin.Connectivity;
+using Plugin.DeviceInfo;
 using Tecnopolis_QR_App.Models;
 
 namespace Tecnopolis_QR_App.Views
@@ -50,8 +51,6 @@ namespace Tecnopolis_QR_App.Views
                         await Navigation.PushModalAsync(new NotPass());
                     }
                 }
-
-                
 
             }
             catch (Exception ex)
@@ -151,12 +150,9 @@ namespace Tecnopolis_QR_App.Views
         public static async Task<string> ApiPostTicket(Clientes c)
         {
             HttpClient Client = new HttpClient();
-
-            var json = JsonConvert.SerializeObject(c);
-            var contentJson = new StringContent(json, Encoding.UTF8, "application/json");
             
             HttpResponseMessage res =
-                await Client.PostAsync($"http://itecno.com.ar:3000/api/tecnopolis/tickets/localdatabasebackup/{c.espectaculo_id}/{c.dni}/{c.fechayhora.ToString("yyyy-M-dd hh:mm:ss")}/{c.personas}/{c.sala}", contentJson);
+                await Client.PostAsync($"http://itecno.com.ar:3000/api/tecnopolis/tickets/localdatabasebackup/{c.espectaculo_id}/{c.dni}/{c.fechayhora.ToString("yyyy-M-dd hh:mm:ss")}/{c.personas}/{c.sala}/{CrossDeviceInfo.Current.Id}", null);
             string resBody = await res.Content.ReadAsStringAsync();
 
             return resBody;
