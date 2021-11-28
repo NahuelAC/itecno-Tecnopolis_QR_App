@@ -2,21 +2,17 @@
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="Tecnopolis_QR_App.Views.MainPage">
+
     
 
     <StackLayout>
 
         <Frame>
 
-            <ImageButton Source="LOGOARQTECH2" HorizontalOptions="Center" BackgroundColor="Transparent"
-                         x:Name="ConfigBtn" Clicked="ConfigBtn_OnClicked"/>
+            <Image Source="LOGOARQTECH2"
+                ></Image>
             
         </Frame>
-        
-        <Label x:Name="modeLabel"
-               Text="Modo: Tecnopolis"
-               TextColor="Gray"
-               HorizontalOptions="CenterAndExpand"/>
         
         <ImageButton Source="Qr_Scanner"
                      x:Name="btnScannerQR"
@@ -28,16 +24,27 @@
                      HorizontalOptions="CenterAndExpand"
                      VerticalOptions="CenterAndExpand" />
 
-        <Button Text="Escanear DNI"
-                x:Name="btnInputDNI"
-                Clicked="BtnScanDNI_OnClicked"
+        <!-- <Button Text="Registrar con DNI" -->
+        <!--         x:Name="btnInputDNI" -->
+        <!--         Clicked="BtnInputDNI_OnClicked" -->
+        <!--         TextColor="White" -->
+        <!--         BackgroundColor="#FF9300" -->
+        <!--         VerticalOptions="CenterAndExpand" -->
+        <!--         HorizontalOptions="Center" -->
+        <!--         HeightRequest="45" -->
+        <!--         WidthRequest="200" -->
+        <!--     ></Button> -->
+        
+        <Button Text="Registrar con DNI"
+                x:Name="btnUploadData"
+                Clicked="BtnUploadData_OnClicked"
                 TextColor="White"
                 BackgroundColor="#FF9300"
                 VerticalOptions="CenterAndExpand"
-                HorizontalOptions="CenterAndExpand"
+                HorizontalOptions="Center"
                 HeightRequest="45"
                 WidthRequest="200"
-        />
+        ></Button>
 
     </StackLayout>
 

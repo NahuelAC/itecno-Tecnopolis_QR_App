@@ -14,10 +14,9 @@ namespace Tecnopolis_QR_App
         {
             db = new SQLiteAsyncConnection(dbPath);
             db.CreateTableAsync<Clientes>().Wait();
-            db.CreateTableAsync<Entradas>().Wait();
         }
 
-        public Task SaveClientesAsync(Clientes clients)
+        public Task<int> SaveClientesAsync(Clientes clients)
         {
             if (clients.id==0)
             {
@@ -29,36 +28,20 @@ namespace Tecnopolis_QR_App
             }
         }
 
-        public Task<List<Clientes>> GetClienteByDni(string dni)
+        //public Task<Clientes> GetClienteByDniAsync(string Dni, DateTime Dt)
+        public Task<Clientes> GetClienteByDniAsync(string Dni)
         {
-            return db.Table<Clientes>().Where(c => c.dni == dni).ToListAsync();
+            return db.Table<Clientes>().Where(a => a.dni == Dni).FirstOrDefaultAsync();
         }
 
         public Task<List<Clientes>> GetAllClientes()
         {
             return db.Table<Clientes>().ToListAsync();
         }
-        public Task SaveEntradasAsync(Entradas entrada)
-        {
-            if (entrada.idEntradas==0)
-            {
-                return db.InsertAsync(entrada);
-            }
-            else
-            {
-                return null;
-            }
-        }
-
-        public Task<List<Entradas>> GetEntradaByDni(string dni)
-        {
-            return db.Table<Entradas>().Where(c => c.DNI == dni).ToListAsync();
-        }
-
-        public Task<List<Entradas>> GetAllEntradas()
-        {
-            return db.Table<Entradas>().ToListAsync();
-        }
         
+        public Task DeleteClienteAsync(Clientes cliente)
+        {
+            return db.DeleteAsync(cliente);
+        }
     }
 }
