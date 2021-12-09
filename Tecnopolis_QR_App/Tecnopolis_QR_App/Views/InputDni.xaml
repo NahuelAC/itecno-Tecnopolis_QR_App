@@ -1,0 +1,50 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="Tecnopolis_QR_App.Views.InputDni">
+    <ContentPage.Content>
+        <StackLayout>
+            
+            <StackLayout HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand">
+                
+                <Entry Placeholder="Ingresar DNI"
+                       x:Name="EntryDni"
+                       MaxLength="15"
+                       WidthRequest="250"
+                       IsSpellCheckEnabled="false"
+                       IsTextPredictionEnabled="false"
+                       VerticalOptions="Center"
+                       HorizontalOptions="CenterAndExpand"
+                       Keyboard="Numeric"                       
+                />
+
+                <Button Text="Enter"
+                        x:Name="EnterBtn"
+                        Clicked="EnterBtn_OnClicked"
+                        TextColor="White"
+                        Margin="0,25,0,0"
+                        BackgroundColor="#FF9300"
+                        VerticalOptions="Center"
+                        HorizontalOptions="CenterAndExpand"
+                        HeightRequest="45"
+                        WidthRequest="150"
+                />
+                
+            </StackLayout>
+
+            
+            <Button Text="Cerrar"
+                    x:Name="CloseBtn"
+                    TextColor="White"
+                    BackgroundColor="#FF9300"
+                    VerticalOptions="CenterAndExpand"
+                    HorizontalOptions="Center"
+                    HeightRequest="45"
+                    WidthRequest="200"
+                    Clicked="CloseBtn_OnClicked"
+            />
+
+        </StackLayout>
+    </ContentPage.Content>
+</ContentPage>

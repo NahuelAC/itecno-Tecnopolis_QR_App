@@ -9,10 +9,15 @@
 
         <Frame>
 
-            <Image Source="LOGOARQTECH2"
-                ></Image>
+            <ImageButton Source="LOGOARQTECH2" HorizontalOptions="Center" BackgroundColor="Transparent"
+                         x:Name="ConfigBtn" Clicked="ConfigBtn_OnClicked"/>
             
         </Frame>
+        
+        <Label x:Name="modeLabel"
+               Text="Tecnopolis"
+               TextColor="Gray"
+               HorizontalOptions="CenterAndExpand"/>
         
         <ImageButton Source="Qr_Scanner"
                      x:Name="btnScannerQR"
@@ -24,27 +29,26 @@
                      HorizontalOptions="CenterAndExpand"
                      VerticalOptions="CenterAndExpand" />
 
-        <!-- <Button Text="Registrar con DNI" -->
-        <!--         x:Name="btnInputDNI" -->
-        <!--         Clicked="BtnInputDNI_OnClicked" -->
-        <!--         TextColor="White" -->
-        <!--         BackgroundColor="#FF9300" -->
-        <!--         VerticalOptions="CenterAndExpand" -->
-        <!--         HorizontalOptions="Center" -->
-        <!--         HeightRequest="45" -->
-        <!--         WidthRequest="200" -->
-        <!--     ></Button> -->
-        
-        <Button Text="Backup"
-                x:Name="btnUploadData"
-                Clicked="BtnUploadData_OnClicked"
+        <Button Text="Ingresar con DNI"
+                x:Name="btnScanDNI"
+                Clicked="BtnScanDNI_OnClicked"
                 TextColor="White"
                 BackgroundColor="#FF9300"
                 VerticalOptions="CenterAndExpand"
                 HorizontalOptions="Center"
                 HeightRequest="45"
                 WidthRequest="200"
-        ></Button>
+            ></Button>
+        
+        <Label Text="Version 3.0"
+               TextColor="Gray"
+               HorizontalOptions="CenterAndExpand"
+               Margin="0,0,0,15"/>
+            
+        <Label x:Name="deviceNumber"
+               TextColor="Gray"
+               HorizontalOptions="CenterAndExpand"
+               Margin="0,0,0,15"/>
 
     </StackLayout>
 

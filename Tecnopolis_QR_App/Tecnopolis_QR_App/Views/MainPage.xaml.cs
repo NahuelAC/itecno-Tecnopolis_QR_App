@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Net.Http;
-using System.Text;
 using System.Threading.Tasks;
 using Acr.UserDialogs;
-using Newtonsoft.Json;
 using Plugin.Connectivity;
 using Plugin.DeviceInfo;
 using Tecnopolis_QR_App.Models;
@@ -15,6 +12,8 @@ namespace Tecnopolis_QR_App.Views
         public MainPage()
         {
             InitializeComponent();
+            
+            deviceNumber.Text = CrossDeviceInfo.Current.Id;
         }
 
         private async void BtnScannerQR_OnClicked(object sender, EventArgs e)
@@ -37,13 +36,17 @@ namespace Tecnopolis_QR_App.Views
 
                 if (result != null)
                 {
-                    //bool can_pass = CanPassOnlineDB(qr_data);
-                    bool can_pass = await CanPassLocalDB(qr_data);
+                    bool can_pass = false;
+                    
+                    if (CrossConnectivity.Current.IsConnected)
+                        can_pass = await CanPassOnlineDB(qr_data);
+                    else
+                        can_pass = await CanPassLocalDB(qr_data);
 
                     if (can_pass)
                     {
                         UserDialogs.Instance.HideLoading();
-                        await Navigation.PushModalAsync(new Pass(qr_data[3]));
+                        await Navigation.PushModalAsync(new Pass(qr_data[4]));
                     }
                     else
                     {
@@ -56,25 +59,38 @@ namespace Tecnopolis_QR_App.Views
             catch (Exception ex)
             {
                 UserDialogs.Instance.HideLoading();
-                await DisplayAlert("Error", ex.Message.ToString(), "Ok");
+                await DisplayAlert("Error", ex.Message, "Ok");
             }
         }
 
-        private bool CanPassOnlineDB(string[] qr_data)
+        private async Task<bool> CanPassOnlineDB(string[] qr_data)
         {
             bool response = false;
             DateTime dt_actual = DateTime.Now;
             DateTime qr_dt = Convert.ToDateTime(qr_data[2]);
             string qr_dni = qr_data[1];
 
-            if (qr_dt.Date == dt_actual.Date && dt_actual.Hour <= (qr_dt.Hour + 2))
+            if (qr_dt.Date == dt_actual.Date)
             {
-                bool data = new DatabaseOnline().getInfo(qr_dni, qr_dt);
-                response = data;
+                var data = await ApiClient.GetTicketsByDni(qr_dni);
+                if (data != null)
+                {
+                    foreach (var e in data)
+                    {
+                        if (qr_dt.Date == e.FechaV.Date && e.Show == null)
+                        {
+                            await ApiClient.PutTicket(e.idEntradas.ToString(), DateTime.Now);
+                            response = true;
+                            await DisplayAlert("", response.ToString(), "Ok");
+                            break;
+                        }
+                    }
+                }
             }
 
             return response;
         }
+        
         private async Task<bool> CanPassLocalDB(string[] qr_data)
         {
             bool response = false;
@@ -84,78 +100,73 @@ namespace Tecnopolis_QR_App.Views
 
             if (qr_dt.Date == dt_actual.Date)
             {
-                var dni_already_register = await App.SQLiteDB.GetClienteByDniAsync(qr_dni);
-                if (dni_already_register != null && dni_already_register.fechayhora.Day == qr_dt.Day)
-                    response = false;
+                var data = await App.SQLiteDB.GetEntradasByDniAsync(qr_dni);
+                if (data != null)
+                {
+                    await DisplayAlert("", "Hay data", "Ok");
+                    var ishere = false;
+                    foreach (var e in data)
+                    {
+                        if (e.FechaV.Day == qr_dt.Day)
+                        {
+                            await DisplayAlert("", "Esta aqui", "Ok");
+                            response = false;
+                            ishere = true;
+                            break;
+                        }
+                        else
+                            ishere = false;
+                    }
+                    
+
+                    if (!ishere)
+                    {
+                        await DisplayAlert("", "No esta aqui", "Ok");
+                        Entradas entrada = new Entradas
+                        {
+                            idEventos = Convert.ToInt32(qr_data[0]),
+                            Evento = qr_data[0],
+                            DNI = qr_data[1],
+                            FechaV = Convert.ToDateTime(qr_data[2]),
+                            Visitantes = Convert.ToInt32(qr_data[4]),
+                            Show = DateTime.Now,
+                            Sid = CrossDeviceInfo.Current.Id
+                        };
+                        await App.SQLiteDB.SaveEntradaAsync(entrada);
+
+                        response = true;
+                    }
+                }
                 else
                 {
-                    Clientes client = new Clientes
+                    await DisplayAlert("", "No hay data", "Ok");
+                    Entradas entrada = new Entradas
                     {
-                        espectaculo_id = qr_data[0],
-                        dni = qr_data[1],
-                        fechayhora = Convert.ToDateTime(qr_data[2]),
-                        personas = qr_data[3],
-                        sala = qr_data[4]
+                        idEventos = Convert.ToInt32(qr_data[0]),
+                        Evento = qr_data[0],
+                        DNI = qr_data[1],
+                        FechaV = Convert.ToDateTime(qr_data[2]),
+                        Visitantes = Convert.ToInt32(qr_data[4]),
+                        Show = DateTime.Now,
+                        Sid = CrossDeviceInfo.Current.Id
                     };
-                    await App.SQLiteDB.SaveClientesAsync(client);
+                    await App.SQLiteDB.SaveEntradaAsync(entrada);
 
                     response = true;
                 }
-                
             }
-
             return response;
         }
 
-        private async void BtnInputDNI_OnClicked(object sender, EventArgs e)
+        private async void BtnScanDNI_OnClicked(object sender, EventArgs e)
         {
-
+            // await DisplayAlert("Error", "Esta funcion no esta disponible.", "Ok");
+            await Navigation.PushModalAsync(new InputDni());
         }
 
-        private async void BtnUploadData_OnClicked(object sender, EventArgs e)
+        private async void ConfigBtn_OnClicked(object sender, EventArgs e)
         {
-            UserDialogs.Instance.ShowLoading();
-            try
-            { 
-                if (CrossConnectivity.Current.IsConnected)
-                {
-                    var datac = await App.SQLiteDB.GetAllClientes();
-
-                    foreach (var cliente in datac)
-                    {
-                        var res = await ApiPostTicket(cliente);
-                        await App.SQLiteDB.DeleteClienteAsync(cliente);
-                    }
-                    UserDialogs.Instance.HideLoading();
-                    await DisplayAlert("", "La operacion se realizo con exito.", "Ok");
-                }
-                else
-                {
-                    UserDialogs.Instance.HideLoading();
-                    await DisplayAlert
-                    (
-                        "Error",
-                        "Error al conectar con el servidor. Asegurese de estar conectado a internet.", 
-                        "Ok"
-                    );
-                }
-            }
-            catch (Exception exception)
-            {
-                UserDialogs.Instance.HideLoading();
-                await DisplayAlert("Error", exception.Message, "Ok");
-            }
-        }
-        
-        public static async Task<string> ApiPostTicket(Clientes c)
-        {
-            HttpClient Client = new HttpClient();
-            
-            HttpResponseMessage res =
-                await Client.PostAsync($"http://itecno.com.ar:3000/api/tecnopolis/tickets/localdatabasebackup/{c.espectaculo_id}/{c.dni}/{c.fechayhora.ToString("yyyy-M-dd hh:mm:ss")}/{c.personas}/{c.sala}/{CrossDeviceInfo.Current.Id}", null);
-            string resBody = await res.Content.ReadAsStringAsync();
-
-            return resBody;
+            await Navigation.PushModalAsync(new ConfigPage());
         }
     }
 }
