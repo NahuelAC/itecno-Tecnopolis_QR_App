@@ -39,6 +39,7 @@ namespace Tecnopolis_QR_App.Views
                     bool can_pass = false;
                     
                     if (CrossConnectivity.Current.IsConnected)
+                    if (false)
                         can_pass = await CanPassOnlineDB(qr_data);
                     else
                         can_pass = await CanPassLocalDB(qr_data);
@@ -100,19 +101,26 @@ namespace Tecnopolis_QR_App.Views
 
             if (qr_dt.Date == dt_actual.Date)
             {
-                var data = await App.SQLiteDB.GetEntradasByDniAsync(qr_dni);
+                var data = await App.SQLiteDB.GetClienteByDni(qr_dni);
                 if (data != null)
                 {
                     await DisplayAlert("", "Hay data", "Ok");
                     var ishere = false;
+                    Clientes c = new Clientes();
                     foreach (var e in data)
                     {
-                        if (e.FechaV.Day == qr_dt.Day)
+                        if (e.fechayhora.Day == qr_dt.Day && e.Show != null)
                         {
                             await DisplayAlert("", "Esta aqui", "Ok");
-                            response = false;
-                            ishere = true;
-                            break;
+                            if (e.Show != null)
+                            {
+                                response = false;
+                                ishere = true;
+                                break;
+                            }
+                            else
+                                c = e;
+                            
                         }
                         else
                             ishere = false;
@@ -121,18 +129,8 @@ namespace Tecnopolis_QR_App.Views
 
                     if (!ishere)
                     {
-                        await DisplayAlert("", "No esta aqui", "Ok");
-                        Entradas entrada = new Entradas
-                        {
-                            idEventos = Convert.ToInt32(qr_data[0]),
-                            Evento = qr_data[0],
-                            DNI = qr_data[1],
-                            FechaV = Convert.ToDateTime(qr_data[2]),
-                            Visitantes = Convert.ToInt32(qr_data[4]),
-                            Show = DateTime.Now,
-                            Sid = CrossDeviceInfo.Current.Id
-                        };
-                        await App.SQLiteDB.SaveEntradaAsync(entrada);
+                        c.Show = DateTime.Now;
+                        await App.SQLiteDB.SaveClientesAsync(c);
 
                         response = true;
                     }
@@ -140,19 +138,16 @@ namespace Tecnopolis_QR_App.Views
                 else
                 {
                     await DisplayAlert("", "No hay data", "Ok");
-                    Entradas entrada = new Entradas
+                    await App.SQLiteDB.SaveClientesAsync(new Clientes
                     {
-                        idEventos = Convert.ToInt32(qr_data[0]),
-                        Evento = qr_data[0],
-                        DNI = qr_data[1],
-                        FechaV = Convert.ToDateTime(qr_data[2]),
-                        Visitantes = Convert.ToInt32(qr_data[4]),
+                        espectaculo_id = qr_data[0],
+                        dni = qr_data[1],
+                        fechayhora = Convert.ToDateTime(qr_data[2]),
                         Show = DateTime.Now,
-                        Sid = CrossDeviceInfo.Current.Id
-                    };
-                    await App.SQLiteDB.SaveEntradaAsync(entrada);
+                    });
+                    
 
-                    response = true;
+                    response = false;
                 }
             }
             return response;

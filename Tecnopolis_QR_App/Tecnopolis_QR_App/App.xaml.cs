@@ -33,6 +33,11 @@ namespace Tecnopolis_QR_App
 
         protected override void OnStart()
         {
+            if (db == null)
+            {
+                db = new DatabaseLocal(Path.Combine(
+                    Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Clientes.db3"));
+            }
         }
 
         protected override void OnSleep()

@@ -35,7 +35,6 @@ namespace Tecnopolis_QR_App.Views
                         if (item.FechaV.Day == DateTime.Now.Day)
                         {
                             await ApiClient.PutTicket(item.idEntradas.ToString(), DateTime.Now);
-                            var evento = await ApiClient.GetEventoById(item.idEventos);
                             UserDialogs.Instance.HideLoading();
                             await Navigation.PushModalAsync(new Pass(item.Visitantes.ToString()));
                             can_pass = true;

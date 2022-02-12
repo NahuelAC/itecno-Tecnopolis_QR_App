@@ -6,16 +6,16 @@
     <ContentPage.Content>
         <StackLayout>
             
-            <!-- <Button Text="Actualizar base de datos" -->
-            <!--         x:Name="adbBtn" -->
-            <!--         TextColor="White" -->
-            <!--         BackgroundColor="#FF9300" -->
-            <!--         VerticalOptions="CenterAndExpand" -->
-            <!--         HorizontalOptions="Center" -->
-            <!--         HeightRequest="45" -->
-            <!--         WidthRequest="250" -->
-            <!--         Clicked="AdbBtn_OnClicked" -->
-            <!-- /> -->
+             <Button Text="Actualizar base de datos" 
+                     x:Name="adbBtn" 
+                     TextColor="White" 
+                     BackgroundColor="#FF9300" 
+                     VerticalOptions="CenterAndExpand" 
+                     HorizontalOptions="Center" 
+                     HeightRequest="45" 
+                     WidthRequest="250" 
+                     Clicked="AdbBtn_OnClicked" 
+             /> 
             <Button Text="subir datos locales"
                     x:Name="udlBtn"
                     TextColor="White"
