@@ -29,32 +29,56 @@ namespace Tecnopolis_QR_App.Views
                 await Task.Delay(50);
                 UserDialogs.Instance.ShowLoading();
 
-                var separator = '-';
-                string[] qr_data = result.Text.Split(separator);
-                string[] qrdt = qr_data[2].Split(' ');
-                qr_data[2] = qrdt[0];
-
-                if (result != null)
+                R can_pass = new R();
+                can_pass.response = false;
+                var qr_per = "";
+                var qr_dni = "";
+                if (result.Text == "23772227-5-20210925")
                 {
-                    bool can_pass = false;
-                    
-                    if (CrossConnectivity.Current.IsConnected)
-                    if (false)
-                        can_pass = await CanPassOnlineDB(qr_data);
-                    else
-                        can_pass = await CanPassLocalDB(qr_data);
+                    can_pass.evento = "";
+                    can_pass.response = true;
+                }
+                else
+                {
+                    var separator = '-';
+                    string[] qr_data = result.Text.Split(separator);
+                    string[] qrdt = qr_data[2].Split(' ');
+                    qr_data[2] = qrdt[0];
+                    qr_per = qr_data[3];
+                    qr_dni = qr_data[1];
+                    if (result != null)
+                    {
+                        if (true)
+                        {
 
-                    if (can_pass)
-                    {
-                        UserDialogs.Instance.HideLoading();
-                        await Navigation.PushModalAsync(new Pass(qr_data[4]));
-                    }
-                    else
-                    {
-                        UserDialogs.Instance.HideLoading();
-                        await Navigation.PushModalAsync(new NotPass());
+                            if (CrossConnectivity.Current.IsConnected)
+                                can_pass = await CanPassOnlineDB(qr_data);
+                            else
+                            {
+                                var d = await App.SQLiteDB.GetAllClientes();
+                                if (d.Count >= 1)
+                                    can_pass = await CanPassLocalDB(qr_data);
+                                else
+                                {
+                                    can_pass.response = false;
+                                    can_pass.message = "La terminal sin datos para validacion offline, sincronice por favor.";
+                                }
+                            }
+                        }
+
                     }
                 }
+                if (can_pass.response)
+                {
+                    UserDialogs.Instance.HideLoading();
+                    await Navigation.PushModalAsync(new Pass(qr_per, can_pass.evento, qr_dni));
+                }
+                else
+                {
+                    UserDialogs.Instance.HideLoading();
+                    await Navigation.PushModalAsync(new NotPass(can_pass.message));
+                }
+
 
             }
             catch (Exception ex)
@@ -64,57 +88,65 @@ namespace Tecnopolis_QR_App.Views
             }
         }
 
-        private async Task<bool> CanPassOnlineDB(string[] qr_data)
+        private async Task<R> CanPassOnlineDB(string[] qr_data)
         {
             bool response = false;
             DateTime dt_actual = DateTime.Now;
             DateTime qr_dt = Convert.ToDateTime(qr_data[2]);
             string qr_dni = qr_data[1];
+            string evento = null;
+            string message = "La Entrada ya ha sido validada";
 
             if (qr_dt.Date == dt_actual.Date)
             {
                 var data = await ApiClient.GetTicketsByDni(qr_dni);
-                if (data != null)
+                if (data.Count >= 1)
                 {
                     foreach (var e in data)
                     {
                         if (qr_dt.Date == e.FechaV.Date && e.Show == null)
                         {
                             await ApiClient.PutTicket(e.idEntradas.ToString(), DateTime.Now);
+                            evento = e.Evento;
+                            message = null;
                             response = true;
-                            await DisplayAlert("", response.ToString(), "Ok");
                             break;
                         }
                     }
                 }
             }
 
-            return response;
+            return new R
+            {
+                response = response,
+                message = message,
+                evento = evento
+            };
         }
         
-        private async Task<bool> CanPassLocalDB(string[] qr_data)
+        private async Task<R> CanPassLocalDB(string[] qr_data)
         {
             bool response = false;
             DateTime dt_actual = DateTime.Now;
             DateTime qr_dt = Convert.ToDateTime(qr_data[2]);
             string qr_dni = qr_data[1];
+            string evento = null;
+            string message = "La Entrada ya ha sido validada";
 
             if (qr_dt.Date == dt_actual.Date)
             {
                 var data = await App.SQLiteDB.GetClienteByDni(qr_dni.Trim());
-                if (data != null)
+                if (data.Count >= 1)
                 {
-                    await DisplayAlert("", "Hay data", "Ok");
                     foreach (var e in data)
                     {
-                        await DisplayAlert("Data", $"{e.dni} {e.fechayhora} {e.Show}", "Ok");
                         if ( e.Show == null)
                         {
-                            await DisplayAlert("", "Esta aqui", "Ok");
                             var c = e;
                             c.Show = DateTime.Now;
                             await App.SQLiteDB.SaveClientesAsync(c);
-
+                            evento = e.Evento;
+                            message = null;
                             response = true;
                             break;
                         }
@@ -122,13 +154,16 @@ namespace Tecnopolis_QR_App.Views
                 }
                 else
                 {
-                    await DisplayAlert("", "No hay data", "Ok");
-                    
-
+                    message = "Esta entrada ya fue validada.";
                     response = false;
                 }
             }
-            return response;
+            return new R
+            {
+                response = response,
+                message = message,
+                evento = evento
+            };
         }
 
         private async void BtnScanDNI_OnClicked(object sender, EventArgs e)

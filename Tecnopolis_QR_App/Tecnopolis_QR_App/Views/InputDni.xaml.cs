@@ -32,11 +32,11 @@ namespace Tecnopolis_QR_App.Views
                     var data = await ApiClient.GetTicketsByDni(dni);
                     foreach (var item in data)
                     {
-                        if (item.FechaV.Day == DateTime.Now.Day)
+                        if (item.FechaV.Day == DateTime.Now.Day && item.Show == null)
                         {
                             await ApiClient.PutTicket(item.idEntradas.ToString(), DateTime.Now);
                             UserDialogs.Instance.HideLoading();
-                            await Navigation.PushModalAsync(new Pass(item.Visitantes.ToString()));
+                            await Navigation.PushModalAsync(new Pass(item.Visitantes.ToString(), item.Evento, item.DNI));
                             can_pass = true;
                             break;
                         }
@@ -45,7 +45,7 @@ namespace Tecnopolis_QR_App.Views
                     if (!can_pass)
                     {
                         UserDialogs.Instance.HideLoading();
-                        await Navigation.PushModalAsync(new NotPass());
+                        await Navigation.PushModalAsync(new NotPass("La entrada ya a sido validada"));
                     }
                 }
                 else

@@ -42,6 +42,10 @@ namespace Tecnopolis_QR_App
         {
             return db.DeleteAsync(entrada);
         }
+        public Task DeleteAllClientesAsync()
+        {
+            return db.DeleteAllAsync<Clientes>();
+        }
 
         public Task SaveClientesAsync(Clientes clients)
         {

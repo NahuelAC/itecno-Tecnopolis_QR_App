@@ -12,9 +12,10 @@ namespace Tecnopolis_QR_App
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class NotPass : ContentPage
     {
-        public NotPass()
+        public NotPass(string message = null)
         {
             InitializeComponent();
+            Message.Text = message;
         }
         private async void CloseBtn_OnClicked(object sender, EventArgs e)
         {

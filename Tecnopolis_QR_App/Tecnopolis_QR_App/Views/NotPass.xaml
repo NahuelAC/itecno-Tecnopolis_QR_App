@@ -21,6 +21,14 @@
                 ></Image>
             </StackLayout>
 
+            <Label Text=""
+                   x:Name="Message"
+                       TextColor="White"
+                       FontSize="20"
+                       Padding="0"
+                       VerticalOptions="Start" 
+                       HorizontalOptions="CenterAndExpand" />
+
             <Button Text="Cerrar"
                     x:Name="CloseBtn"
                     TextColor="White"

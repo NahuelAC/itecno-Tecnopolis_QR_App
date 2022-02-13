@@ -15,28 +15,49 @@ namespace Tecnopolis_QR_App.Views
             InitializeComponent();
         }
 
-        private async void AdbBtn_OnClicked(object sender, EventArgs e)
+        private async void SyncBtn_OnClicked(object sender, EventArgs e)
         {
             UserDialogs.Instance.ShowLoading();
             try
             {
                 if (CrossConnectivity.Current.IsConnected)
                 {
-                    var data = await ApiClient.GetTicketsByDateNow();
+                    var data = await App.SQLiteDB.GetAllClientes();
 
-                    foreach (var entrada in data)
+                    foreach (var c in data)
+                    {
+                        if (c.Show != null)
+                        {
+                            var x = await ApiClient.GetTicketsByDni(c.dni);
+                            foreach (var de in x)
+                            {
+                                if (de.FechaV.Date == c.fechayhora.Date && de.Show == null)
+                                {
+                                    await ApiClient.PutTicket(de.idEntradas.ToString(), Convert.ToDateTime(c.Show));
+                                    //await App.SQLiteDB.DeleteClienteAsync(c);
+                                    break;
+                                }
+                            }
+                        }
+                    }
+
+                    await App.SQLiteDB.DeleteAllClientesAsync();
+
+                    var data2 = await ApiClient.GetTicketsByDateNow();
+
+                    foreach (var entrada in data2)
                     {
                         await App.SQLiteDB.SaveClientesAsync(new Clientes
                         {
                             espectaculo_id = entrada.idEventos.ToString(),
                             dni = entrada.DNI.Trim(),
                             fechayhora = entrada.FechaV,
+                            Evento = entrada.Evento,
                             Show = entrada.Show,
                         });
                     }
                     UserDialogs.Instance.HideLoading();
                     var d = await App.SQLiteDB.GetAllClientes();
-                    await DisplayAlert("", d[0].dni, "Ok");
                     await DisplayAlert("", "La operacion se realizo con exito.", "Ok");
                 }
                 else
@@ -53,61 +74,21 @@ namespace Tecnopolis_QR_App.Views
             catch (Exception ex)
             {
                 UserDialogs.Instance.HideLoading();
-                // await DisplayAlert
-                // (
-                //     "Error",
-                //     "Error al recibir los datos del servidor, intente mas tarde. Si el error persiste contacte con un desarrollador.", 
-                //     "Ok"
-                // );
                 await DisplayAlert
+                (
+                    "Error",
+                    "Error al recibir los datos del servidor, intente mas tarde. Si el error persiste contacte con un desarrollador.",
+                    "Ok"
+                );
+                /*await DisplayAlert
                 (
                     "Error",
                     ex.Message,
                     "Ok"
-                );
+                );*/
             }
         }
 
-        private async void UdlBtn_OnClicked(object sender, EventArgs e)
-        {
-            if (CrossConnectivity.Current.IsConnected)
-            {
-                UserDialogs.Instance.ShowLoading();
-                try
-                {
-                    var data = await App.SQLiteDB.GetAllClientes();
-
-                    foreach (var c in data)
-                    {
-                        if (c.Show != null)
-                        {
-                            var d = await ApiClient.GetTicketsByDni(c.dni);
-                            foreach (var de in d)
-                            {
-                                if (de.FechaV.Date == c.fechayhora.Date && de.Show == null)
-                                {
-                                    await ApiClient.PutTicket(de.idEntradas.ToString(), Convert.ToDateTime(c.Show));
-                                    await App.SQLiteDB.DeleteClienteAsync(c);
-                                    break;
-                                }
-                            }
-                        }
-                    }
-                    UserDialogs.Instance.HideLoading();
-                    await DisplayAlert("", "La operacion se realizo con exito.", "Ok");
-                }
-                catch (Exception exception)
-                {
-                    UserDialogs.Instance.HideLoading();
-                    await DisplayAlert("Error", exception.Message, "Ok");
-                    Console.WriteLine(exception);
-                }
-            }
-            else
-            {
-                await DisplayAlert("Error", "Necesita estar conectado a internet para utilizar esta funcion", "Ok");
-            }
-        }
 
         private async void CloseBtn_OnClicked(object sender, EventArgs e)
         {

@@ -6,26 +6,17 @@
     <ContentPage.Content>
         <StackLayout>
             
-             <Button Text="Actualizar base de datos" 
+             <Button Text="Sincronizar con la Base de Datos" 
                      x:Name="adbBtn" 
                      TextColor="White" 
                      BackgroundColor="#FF9300" 
                      VerticalOptions="CenterAndExpand" 
                      HorizontalOptions="Center" 
-                     HeightRequest="45" 
+                     HeightRequest="55" 
                      WidthRequest="250" 
-                     Clicked="AdbBtn_OnClicked" 
+                     Clicked="SyncBtn_OnClicked" 
              /> 
-            <Button Text="subir datos locales"
-                    x:Name="udlBtn"
-                    TextColor="White"
-                    BackgroundColor="#FF9300"
-                    VerticalOptions="CenterAndExpand"
-                    HorizontalOptions="Center"
-                    HeightRequest="45"
-                    WidthRequest="200"
-                    Clicked="UdlBtn_OnClicked"
-            />
+
             <Button Text="Cerrar"
                     TextColor="White"
                     BackgroundColor="#FF9300"

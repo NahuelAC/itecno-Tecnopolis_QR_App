@@ -6,7 +6,7 @@
         <StackLayout>
             <Label Text="Pueden pasar"
                    TextColor="#55ACAC"
-                   FontSize="60"
+                   FontSize="40"
                    Padding="0,100,0,0"
                    VerticalOptions="Start" 
                    HorizontalOptions="CenterAndExpand" />
@@ -16,8 +16,18 @@
                    VerticalOptions="Center"
                    HorizontalOptions="CenterAndExpand"
                 ></Image>
+            <Label x:Name="Evento"
+                   Text=""
+                   FontSize="20"
+                   VerticalOptions="CenterAndExpand"
+                   HorizontalOptions="CenterAndExpand"></Label>
+            <Label x:Name="Dni"
+                   Text=""
+                   FontSize="20"
+                   VerticalOptions="CenterAndExpand"
+                   HorizontalOptions="CenterAndExpand"></Label>
             <Label x:Name="PersonsLabel"
-                   Text="Holaaaaaaaa"
+                   Text=""
                    FontSize="40"
                    VerticalOptions="CenterAndExpand"
                    HorizontalOptions="CenterAndExpand"></Label>
