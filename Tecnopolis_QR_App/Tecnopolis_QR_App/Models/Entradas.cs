@@ -11,6 +11,6 @@ namespace Tecnopolis_QR_App.Models
         public string DNI { get; set; }
         public DateTime FechaV { get; set; }
         public int Visitantes { get; set; } 
-        public object? Show { get; set; }
+        public DateTime? Show { get; set; }
     }
 }

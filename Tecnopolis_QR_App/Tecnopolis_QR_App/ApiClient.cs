@@ -36,7 +36,7 @@ namespace Tecnopolis_QR_App
         public static async Task<List<Entradas>> GetTicketsByDni(string dni)
         {
             HttpResponseMessage res =
-                await _client.GetAsync($"http://itecno.com.ar:3000/api/tecnopolis/tickets/bydni/{dni}");
+                await _client.GetAsync($"http://itecno.com.ar:3000/api/tecnopolis/tickets/bydni/{dni}/");
             
             string resBody = await res.Content.ReadAsStringAsync();
             

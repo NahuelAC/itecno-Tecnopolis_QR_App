@@ -29,12 +29,14 @@ namespace Tecnopolis_QR_App.Views
                         await App.SQLiteDB.SaveClientesAsync(new Clientes
                         {
                             espectaculo_id = entrada.idEventos.ToString(),
-                            dni = entrada.DNI,
+                            dni = entrada.DNI.Trim(),
                             fechayhora = entrada.FechaV,
                             Show = entrada.Show,
                         });
                     }
                     UserDialogs.Instance.HideLoading();
+                    var d = await App.SQLiteDB.GetAllClientes();
+                    await DisplayAlert("", d[0].dni, "Ok");
                     await DisplayAlert("", "La operacion se realizo con exito.", "Ok");
                 }
                 else
@@ -77,14 +79,17 @@ namespace Tecnopolis_QR_App.Views
 
                     foreach (var c in data)
                     {
-                        var d = await ApiClient.GetTicketsByDni(c.dni);
-                        foreach (var de in d)
+                        if (c.Show != null)
                         {
-                            if (de.FechaV.Date == c.fechayhora.Date)
+                            var d = await ApiClient.GetTicketsByDni(c.dni);
+                            foreach (var de in d)
                             {
-                                await ApiClient.PutTicket(de.idEntradas.ToString(), Convert.ToDateTime(c.Show));
-                                await App.SQLiteDB.DeleteClienteAsync(c);
-                                break;
+                                if (de.FechaV.Date == c.fechayhora.Date && de.Show == null)
+                                {
+                                    await ApiClient.PutTicket(de.idEntradas.ToString(), Convert.ToDateTime(c.Show));
+                                    await App.SQLiteDB.DeleteClienteAsync(c);
+                                    break;
+                                }
                             }
                         }
                     }

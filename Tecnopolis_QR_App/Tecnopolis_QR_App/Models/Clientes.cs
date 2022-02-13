@@ -9,6 +9,6 @@ namespace Tecnopolis_QR_App.Models
         public string espectaculo_id { get; set; }
         [MaxLength(15)] public string dni { get; set; }
         public DateTime fechayhora { get; set; }
-        public object Show { get; set; }
+        public DateTime? Show { get; set; }
     }
 }

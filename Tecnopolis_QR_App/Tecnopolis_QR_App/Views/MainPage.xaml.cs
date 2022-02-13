@@ -101,50 +101,28 @@ namespace Tecnopolis_QR_App.Views
 
             if (qr_dt.Date == dt_actual.Date)
             {
-                var data = await App.SQLiteDB.GetClienteByDni(qr_dni);
+                var data = await App.SQLiteDB.GetClienteByDni(qr_dni.Trim());
                 if (data != null)
                 {
                     await DisplayAlert("", "Hay data", "Ok");
-                    var ishere = false;
-                    Clientes c = new Clientes();
                     foreach (var e in data)
                     {
-                        if (e.fechayhora.Day == qr_dt.Day && e.Show != null)
+                        await DisplayAlert("Data", $"{e.dni} {e.fechayhora} {e.Show}", "Ok");
+                        if ( e.Show == null)
                         {
                             await DisplayAlert("", "Esta aqui", "Ok");
-                            if (e.Show != null)
-                            {
-                                response = false;
-                                ishere = true;
-                                break;
-                            }
-                            else
-                                c = e;
-                            
+                            var c = e;
+                            c.Show = DateTime.Now;
+                            await App.SQLiteDB.SaveClientesAsync(c);
+
+                            response = true;
+                            break;
                         }
-                        else
-                            ishere = false;
-                    }
-                    
-
-                    if (!ishere)
-                    {
-                        c.Show = DateTime.Now;
-                        await App.SQLiteDB.SaveClientesAsync(c);
-
-                        response = true;
                     }
                 }
                 else
                 {
                     await DisplayAlert("", "No hay data", "Ok");
-                    await App.SQLiteDB.SaveClientesAsync(new Clientes
-                    {
-                        espectaculo_id = qr_data[0],
-                        dni = qr_data[1],
-                        fechayhora = Convert.ToDateTime(qr_data[2]),
-                        Show = DateTime.Now,
-                    });
                     
 
                     response = false;
